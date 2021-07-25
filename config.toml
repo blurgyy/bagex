@@ -1,0 +1,32 @@
+[global]
+# Paths in this array is **prepended** to the PATH environment variable with
+# the same order specified here, that is, first element in this array will be
+# the first path in the resulting PATH, second element will be the second path,
+# etc.
+PATH = [
+    "~/.gy/bin",
+    "/usr/bin",
+]
+
+# `env` specifies which executables should be applied with each environment
+# variable.
+[env]
+[env.DRI_PRIME]
+value = 1
+executables = [
+    "steam",
+    "alacritty",
+]
+
+# `exe` specifies which environments are associated with a given executable.
+[exe]
+[exe.xsecurelock]
+XSECURELOCK_FONT = "Cascadia Code"
+XSECURELOCK_PASSWORD_PROMPT = "cursor"
+XSECURELOCK_COMPOSITE_OBSCURER = 0
+
+# The final environment is a combination of the above 2 configuration methods,
+# colliding environment variable names will cause `bagex` to panic.
+
+# Author: Blurgy <gy@blurgy.xyz>
+# Date:   Jul 26 2021, 00:24 [CST]
