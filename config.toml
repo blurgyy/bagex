@@ -1,9 +1,8 @@
-[global]
-# Paths in this array is **prepended** to the PATH environment variable with
+# Paths in this array are **prepended** to the PATH environment variable with
 # the same order specified here, that is, first element in this array will be
 # the first path in the resulting PATH, second element will be the second path,
-# etc.
-PATH = [
+# etc..
+path = [
     "~/.gy/bin",
     "/usr/bin",
 ]
