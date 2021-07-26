@@ -78,26 +78,26 @@ pub fn compose_environments(
     log::debug!("Getting envs from env-exe mapping from config file ..");
     if let toml::Value::Table(env_table) = config.env.unwrap() {
         for (env_name, info) in env_table {
-            if let toml::Value::Array(executables) =
-                info.get("executables").unwrap()
-            {
-                if executables
-                    .contains(&toml::Value::String(req_exe_name.clone()))
-                {
-                    assert!(
+            if let toml::Value::Table(ref value_exe_pairs) = info {
+                for (value, exes) in value_exe_pairs {
+                    if let toml::Value::Array(executables) = exes {
+                        if executables.contains(&toml::Value::String(
+                            req_exe_name.clone(),
+                        )) {
+                            assert!(
                         !ret.contains_key(&env_name),
                         "Environment variable {} is specified multiple times",
                         env_name,
                     );
-                    let value = info.get("value").unwrap();
-                    ret.insert(
-                        env_name,
-                        if value.is_str() {
-                            value.as_str().unwrap().to_string()
-                        } else {
-                            value.to_string()
-                        },
-                    );
+                            log::debug!(
+                                "Setting env: {}={}",
+                                env_name,
+                                value
+                            );
+                            ret.insert(env_name, value.to_string());
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -108,20 +108,19 @@ pub fn compose_environments(
         for (config_exe_name, env_specs) in exe_table {
             if config_exe_name == req_exe_name {
                 if let toml::Value::Table(envs) = env_specs {
-                    for (env_name, value) in envs {
+                    for (env_name, value_raw) in envs {
                         assert!(
                             !ret.contains_key(&env_name),
                             "Environment variable {} is specified multiple times",
                             env_name,
                         );
-                        ret.insert(
-                            env_name,
-                            if value.is_str() {
-                                value.as_str().unwrap().to_string()
-                            } else {
-                                value.to_string()
-                            },
-                        );
+                        let value = if value_raw.is_str() {
+                            value_raw.as_str().unwrap().to_string()
+                        } else {
+                            value_raw.to_string()
+                        };
+                        log::debug!("Setting env: {}={}", env_name, value);
+                        ret.insert(env_name, value);
                     }
                 }
             }
