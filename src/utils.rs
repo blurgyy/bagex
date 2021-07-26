@@ -84,6 +84,11 @@ pub fn compose_environments(
                 if executables
                     .contains(&toml::Value::String(req_exe_name.clone()))
                 {
+                    assert!(
+                        !ret.contains_key(&env_name),
+                        "Environment variable {} is specified multiple times",
+                        env_name,
+                    );
                     let value = info.get("value").unwrap();
                     ret.insert(
                         env_name,
@@ -104,6 +109,11 @@ pub fn compose_environments(
             if config_exe_name == req_exe_name {
                 if let toml::Value::Table(envs) = env_specs {
                     for (env_name, value) in envs {
+                        assert!(
+                            !ret.contains_key(&env_name),
+                            "Environment variable {} is specified multiple times",
+                            env_name,
+                        );
                         ret.insert(
                             env_name,
                             if value.is_str() {
