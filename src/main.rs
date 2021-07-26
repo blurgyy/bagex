@@ -15,7 +15,7 @@ struct Opt {
     #[structopt(help = "Additional arguments to pass to executable")]
     args: Vec<String>,
     #[structopt(help = "Path to config file", short, long)]
-    config_path: Option<PathBuf>,
+    config_file: Option<PathBuf>,
 }
 
 fn main() -> Result<(), Report> {
@@ -28,7 +28,7 @@ fn main() -> Result<(), Report> {
 
     log::debug!("Determining path of configuration file ..");
     let config_file: PathBuf =
-        opt.config_path.unwrap_or(utils::default_config_path());
+        opt.config_file.unwrap_or(utils::default_config_file());
     assert!(config_file.exists(), "{:?} does not exist", config_file);
     log::info!("Using configuration file {:?}", config_file);
 

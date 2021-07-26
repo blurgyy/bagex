@@ -9,7 +9,7 @@ fn get_home_dir() -> PathBuf {
 
 /// If the environment variable $XDXDG_CONFIG_HOME is set, returns
 /// $XDG_CONFIG_HOME/bages/config.toml, else returns $HOME/.config/bagex/config.toml
-pub fn default_config_path() -> PathBuf {
+pub fn default_config_file() -> PathBuf {
     if let Ok(path) = std::env::var("XDG_CONFIG_HOME") {
         PathBuf::from_str(&path).unwrap()
     } else {
