@@ -1,5 +1,5 @@
 use color_eyre::Report;
-use std::{collections::HashMap, fs, path::PathBuf};
+use std::{collections::HashMap, fs, path::PathBuf, process::Command};
 use structopt::StructOpt;
 
 use bagex::*;
@@ -42,13 +42,21 @@ fn main() -> Result<(), Report> {
         utils::compose_and_set_path(config.path.clone().unwrap_or_default());
 
     log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
-    let exe: PathBuf = utils::get_executable_path(opt.exe.clone(), path);
-    log::info!("Using executable from {:?}", exe);
+    let exe_abs_path: PathBuf =
+        utils::get_executable_path(opt.exe.clone(), path);
+    log::info!("Using executable from {:?}", exe_abs_path);
 
     log::debug!("Composing environments for the executable ..");
     let envs: HashMap<String, String> =
         utils::compose_environments(opt.exe, config);
     log::trace!("Composed additional environments: {:#?}", envs);
+
+    log::debug!("Spawning process ..");
+    Command::new(exe_abs_path)
+        .args(opt.args)
+        .envs(envs)
+        .spawn()
+        .expect("Failed to run executable");
 
     Ok(())
 }

@@ -18,12 +18,25 @@ executables = [
     "alacritty",
 ]
 
+[env.printenv_from_env]
+value = true
+executables = [
+    "printenv",
+]
+
 # `exe` specifies which environments are associated with a given executable.
 [exe]
 [exe.xsecurelock]
 XSECURELOCK_FONT = "Cascadia Code"
-XSECURELOCK_PASSWORD_PROMPT = "cursor"
+XSECURELOCK_PASSWORD_PROMPT = "disco"
 XSECURELOCK_COMPOSITE_OBSCURER = 0
+
+[exe.printenv]
+printenv_from_exe = "pass"
+XSECURELOCK_FONT = "Cascadia Code"
+XSECURELOCK_PASSWORD_PROMPT = "disco"
+XSECURELOCK_COMPOSITE_OBSCURER = 0
+pi = 3.14
 
 # The final environment is a combination of the above 2 configuration methods,
 # colliding environment variable names will cause `bagex` to panic.

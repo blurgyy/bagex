@@ -84,9 +84,14 @@ pub fn compose_environments(
                 if executables
                     .contains(&toml::Value::String(req_exe_name.clone()))
                 {
+                    let value = info.get("value").unwrap();
                     ret.insert(
                         env_name,
-                        info.get("value").unwrap().to_string(),
+                        if value.is_str() {
+                            value.as_str().unwrap().to_string()
+                        } else {
+                            value.to_string()
+                        },
                     );
                 }
             }
@@ -99,7 +104,14 @@ pub fn compose_environments(
             if config_exe_name == req_exe_name {
                 if let toml::Value::Table(envs) = env_specs {
                     for (env_name, value) in envs {
-                        ret.insert(env_name, value.to_string());
+                        ret.insert(
+                            env_name,
+                            if value.is_str() {
+                                value.as_str().unwrap().to_string()
+                            } else {
+                                value.to_string()
+                            },
+                        );
                     }
                 }
             }
