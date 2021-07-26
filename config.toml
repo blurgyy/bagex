@@ -2,9 +2,10 @@
 # the same order specified here, that is, first element in this array will be
 # the first path in the resulting PATH, second element will be the second path,
 # etc..
+# Note: tildes in paths are expanded as $HOME.
 path = [
+    "~/.gy/local/bin",
     "~/.gy/bin",
-    "/usr/bin",
 ]
 
 # `env` specifies which executables should be applied with each environment

@@ -19,6 +19,15 @@ pub fn default_config_path() -> PathBuf {
 
 pub fn compose_and_set_path(additional_path: Vec<PathBuf>) -> Vec<PathBuf> {
     let mut path = additional_path;
+    path = path
+        .iter()
+        .map(|x| {
+            PathBuf::from_str(&shellexpand::tilde(
+                &x.to_str().unwrap().to_string(),
+            ))
+            .unwrap()
+        })
+        .collect();
     path.extend(
         std::env::var("PATH")
             .unwrap()
