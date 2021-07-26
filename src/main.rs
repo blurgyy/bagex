@@ -22,7 +22,7 @@ fn main() -> Result<(), Report> {
     log::debug!("Initializing logger and error handler ..");
     setup()?;
 
-    log::debug!("Reading command line args ..");
+    log::debug!("Parsing command line args ..");
     let opt = Opt::from_args();
     log::trace!("Command line args read: {:#?}", opt);
 
