@@ -1,5 +1,5 @@
 use color_eyre::Report;
-use std::{fs, path::PathBuf};
+use std::{collections::HashMap, fs, path::PathBuf};
 use structopt::StructOpt;
 
 use bagex::*;
@@ -39,11 +39,16 @@ fn main() -> Result<(), Report> {
 
     log::debug!("Composing PATH ..");
     let path: Vec<PathBuf> =
-        utils::compose_and_set_path(config.path.unwrap_or_default());
+        utils::compose_and_set_path(config.path.clone().unwrap_or_default());
 
     log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
-    let exe: PathBuf = utils::get_executable_path(opt.exe, path);
+    let exe: PathBuf = utils::get_executable_path(opt.exe.clone(), path);
     log::info!("Using executable from {:?}", exe);
+
+    log::debug!("Composing environments for the executable ..");
+    let envs: HashMap<String, String> =
+        utils::compose_environments(opt.exe, config);
+    log::trace!("Composed additional environments: {:#?}", envs);
 
     Ok(())
 }

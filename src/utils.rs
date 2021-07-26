@@ -1,4 +1,6 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{collections::HashMap, path::PathBuf, str::FromStr};
+
+use crate::config::BagexConfig;
 
 fn get_home_dir() -> PathBuf {
     PathBuf::from_str(&std::env::var("HOME").unwrap_or("/".to_string()))
@@ -47,21 +49,64 @@ pub fn compose_and_set_path(additional_path: Vec<PathBuf>) -> Vec<PathBuf> {
     path
 }
 
-pub fn get_executable_path(exe_name: String, path: Vec<PathBuf>) -> PathBuf {
+pub fn get_executable_path(
+    req_exe_name: String,
+    path: Vec<PathBuf>,
+) -> PathBuf {
     let mut exe: PathBuf = PathBuf::new();
     for p in path {
-        if p.join(&exe_name).exists() {
-            exe = p.join(&exe_name);
+        if p.join(&req_exe_name).exists() {
+            exe = p.join(&req_exe_name);
             break;
         }
     }
     assert!(
         exe.exists(),
         "Requested executable '{}' cannot be found anywhere in $PATH",
-        exe_name,
+        req_exe_name,
     );
 
     exe
+}
+
+pub fn compose_environments(
+    req_exe_name: String,
+    config: BagexConfig,
+) -> HashMap<String, String> {
+    let mut ret: HashMap<String, String> = HashMap::new();
+
+    log::debug!("Getting envs from env-exe mapping from config file ..");
+    if let toml::Value::Table(env_table) = config.env.unwrap() {
+        for (env_name, info) in env_table {
+            if let toml::Value::Array(executables) =
+                info.get("executables").unwrap()
+            {
+                if executables
+                    .contains(&toml::Value::String(req_exe_name.clone()))
+                {
+                    ret.insert(
+                        env_name,
+                        info.get("value").unwrap().to_string(),
+                    );
+                }
+            }
+        }
+    }
+
+    log::debug!("Getting envs from exe-env mapping from config file ..");
+    if let toml::Value::Table(exe_table) = config.exe.unwrap() {
+        for (config_exe_name, env_specs) in exe_table {
+            if config_exe_name == req_exe_name {
+                if let toml::Value::Table(envs) = env_specs {
+                    for (env_name, value) in envs {
+                        ret.insert(env_name, value.to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    ret
 }
 
 // Author: Blurgy <gy@blurgy.xyz>
