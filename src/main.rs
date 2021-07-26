@@ -1,5 +1,5 @@
 use color_eyre::Report;
-use std::{fs, path::PathBuf, str::FromStr};
+use std::{fs, path::PathBuf};
 use structopt::StructOpt;
 
 use bagex::*;
@@ -38,22 +38,8 @@ fn main() -> Result<(), Report> {
     log::trace!("Configuration read: {:#?}", config);
 
     log::debug!("Composing PATH ..");
-    let mut path: Vec<PathBuf> = config.path.unwrap_or_default();
-    path.extend(
-        std::env::var("PATH")
-            .unwrap()
-            .split(":")
-            .map(|x| PathBuf::from_str(x).unwrap())
-            .collect::<Vec<PathBuf>>(),
-    );
-    log::trace!("Paths in composed PATH: {:#?}", path);
-    let env_path: String = path
-        .iter()
-        .map(|x| x.to_str().unwrap().to_string())
-        .collect::<Vec<String>>()
-        .join(":");
-    log::trace!("Composed PATH as environment variable: {:#?}", env_path);
-    std::env::set_var("PATH", env_path);
+    let path: Vec<PathBuf> =
+        utils::compose_and_set_path(config.path.unwrap_or_default());
 
     Ok(())
 }
