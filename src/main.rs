@@ -1,5 +1,7 @@
 use color_eyre::Report;
-use std::{collections::HashMap, fs, path::PathBuf, process::Command};
+use std::{
+    collections::HashMap, fs, path::PathBuf, process::Command, str::FromStr,
+};
 use structopt::StructOpt;
 
 use bagex::*;
@@ -37,18 +39,29 @@ fn main() -> Result<(), Report> {
     let config: config::BagexConfig = toml::from_str(&confstr).unwrap();
     log::trace!("Configuration read: {:#?}", config);
 
-    log::debug!("Composing PATH ..");
-    let path: Vec<PathBuf> =
-        utils::compose_and_set_path(config.path.clone().unwrap_or_default());
-
-    log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
-    let exe_abs_path: PathBuf =
-        utils::get_executable_path(opt.exe.clone(), path);
+    let exe_abs_path: PathBuf = if opt.exe.starts_with("/") {
+        log::debug!("An absolute path {} is requested", opt.exe);
+        PathBuf::from_str(&opt.exe).unwrap_or_default()
+    } else {
+        log::debug!("Composing PATH ..");
+        let path: Vec<PathBuf> = utils::compose_and_set_path(
+            config.path.clone().unwrap_or_default(),
+        );
+        log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
+        utils::get_executable_path(opt.exe.clone(), path)
+    };
     log::info!("Using executable from {:?}", exe_abs_path);
 
     log::debug!("Composing environments for the executable ..");
-    let envs: HashMap<String, String> =
-        utils::compose_environments(opt.exe, config);
+    let envs: HashMap<String, String> = utils::compose_environments(
+        exe_abs_path
+            .file_name()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_string(),
+        config,
+    );
     log::trace!("Composed additional environments: {:#?}", envs);
 
     log::debug!("Spawning process ..");
