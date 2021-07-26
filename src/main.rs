@@ -41,6 +41,10 @@ fn main() -> Result<(), Report> {
     let path: Vec<PathBuf> =
         utils::compose_and_set_path(config.path.unwrap_or_default());
 
+    log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
+    let exe: PathBuf = utils::get_executable_path(opt.exe, path);
+    log::info!("Using executable from {:?}", exe);
+
     Ok(())
 }
 

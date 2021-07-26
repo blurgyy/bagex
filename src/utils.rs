@@ -47,5 +47,22 @@ pub fn compose_and_set_path(additional_path: Vec<PathBuf>) -> Vec<PathBuf> {
     path
 }
 
+pub fn get_executable_path(exe_name: String, path: Vec<PathBuf>) -> PathBuf {
+    let mut exe: PathBuf = PathBuf::new();
+    for p in path {
+        if p.join(&exe_name).exists() {
+            exe = p.join(&exe_name);
+            break;
+        }
+    }
+    assert!(
+        exe.exists(),
+        "Requested executable '{}' cannot be found anywhere in $PATH",
+        exe_name,
+    );
+
+    exe
+}
+
 // Author: Blurgy <gy@blurgy.xyz>
 // Date:   Jul 26 2021, 11:07 [CST]
