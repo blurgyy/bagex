@@ -22,8 +22,8 @@ An illustrative example configuration can be found [here](./config.toml).
 ## Usage
 
 `bagex` takes an executable name as its argument, and tries to read its
-configuration from `$XDG\_CONFIG\_HOME/bagex/config.toml` if the environment
-variable `XDG\_CONFIG\_HOME` is set, otherwise it tries to read
+configuration from `$XDG_CONFIG_HOME/bagex/config.toml` if the environment
+variable `XDG_CONFIG_HOME` is set, otherwise it tries to read
 `$HOME/.config/bagex/config.toml`.  Optionally use `-c|--config-file` to
 specify the configuration file to read.  Example usage:
 
@@ -52,7 +52,7 @@ $ bagex -c ./config.toml bagex -- --version
 bagex 0.1.0
 ```
 
-Use `-d|--dry-run` to only shows the command to run and abort:
+Use `-d|--dry-run` to show the command to run and abort:
 
 ```shell
 $ bagex -c ./config -d echo -- -en "Hello  world!"
@@ -75,3 +75,7 @@ changed in `bagex`'s config, only a `systemctl [--user] restart foo.service`
 has to be called.
 
 ### For application launchers (like rofi, sxhkd, etc.)
+
+## License
+
+[MIT](./LICENSE)
