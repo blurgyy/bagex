@@ -75,13 +75,20 @@ fn main() -> Result<(), Report> {
             .map(|k| format!("{}=\"{}\"", k, envs.get(k).unwrap()))
             .collect::<Vec<String>>()
             .join(" ");
-        let args_string: String = opt.args.join(" ");
-        let command_string: String = vec![
+        let args_string: String = opt
+            .args
+            .iter()
+            .map(|x| format!("\"{}\"", x))
+            .collect::<Vec<String>>()
+            .join(" ");
+        let command_string = vec![
             envs_string,
             exe_abs_path.to_str().unwrap().to_string(),
             args_string,
         ]
-        .join(" ");
+        .join(" ")
+        .trim()
+        .to_string();
         println!("{}", command_string);
     } else {
         log::debug!("Spawning process ..");
