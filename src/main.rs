@@ -18,6 +18,8 @@ struct Opt {
     args: Vec<String>,
     #[structopt(help = "Path to config file", short, long)]
     config_file: Option<PathBuf>,
+    #[structopt(help = "Print the command to run and abort", short, long)]
+    dry_run: bool,
 }
 
 fn main() -> Result<(), Report> {
@@ -66,12 +68,29 @@ fn main() -> Result<(), Report> {
     );
     log::trace!("Composed additional environments: {:#?}", envs);
 
-    log::debug!("Spawning process ..");
-    Command::new(exe_abs_path)
-        .args(opt.args)
-        .envs(envs)
-        .spawn()
-        .expect("Failed to run executable");
+    if opt.dry_run {
+        let envs_string: String = envs
+            .keys()
+            .into_iter()
+            .map(|k| format!("{}=\"{}\"", k, envs.get(k).unwrap()))
+            .collect::<Vec<String>>()
+            .join(" ");
+        let args_string: String = opt.args.join(" ");
+        let command_string: String = vec![
+            envs_string,
+            exe_abs_path.to_str().unwrap().to_string(),
+            args_string,
+        ]
+        .join(" ");
+        println!("{}", command_string);
+    } else {
+        log::debug!("Spawning process ..");
+        Command::new(exe_abs_path)
+            .envs(envs)
+            .args(opt.args)
+            .spawn()
+            .expect("Failed to run executable");
+    }
 
     Ok(())
 }
