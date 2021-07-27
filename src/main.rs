@@ -39,7 +39,9 @@ fn main() -> Result<(), Report> {
     let config: config::BagexConfig = toml::from_str(&confstr).unwrap();
     log::trace!("Configuration read: {:#?}", config);
 
-    let exe_abs_path: PathBuf = if opt.exe.starts_with("/") {
+    let exe_abs_path: PathBuf = if opt.exe.starts_with("/")
+        || opt.exe.starts_with("./")
+    {
         log::debug!("An absolute path {} is requested", opt.exe);
         PathBuf::from_str(&opt.exe).unwrap_or_default()
     } else {
