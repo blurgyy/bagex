@@ -37,8 +37,8 @@ fn main() -> Result<(), Report> {
     log::info!("Using configuration file {:?}", config_file);
 
     log::debug!("Reading configuration file ..");
-    let confstr = fs::read_to_string(config_file).unwrap();
-    let config: config::BagexConfig = toml::from_str(&confstr).unwrap();
+    let config: config::BagexConfig =
+        config::BagexConfig::from_pathbuf(config_file)?;
     log::trace!("Configuration read: {:#?}", config);
 
     let exe_abs_path: PathBuf = if opt.exe.starts_with("/")
