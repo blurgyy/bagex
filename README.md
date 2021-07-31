@@ -76,6 +76,12 @@ has to be called.
 
 ### Application launchers (like rofi, sxhkd, etc.)
 
+`bagex` can be used as a backend for application launchers.  The functionality
+`bagex` provides is basically an application launcher with an environment
+managing module.  After creating the configuration file, invoke bagex through
+the application launchers so that the environment variables are the way the
+config file specifies.
+
 ## License
 
 [MIT](./LICENSE)
