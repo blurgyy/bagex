@@ -8,7 +8,7 @@ fn get_home_dir() -> PathBuf {
 }
 
 /// If the environment variable $XDXDG_CONFIG_HOME is set, returns
-/// $XDG_CONFIG_HOME/bages/config.toml, else returns $HOME/.config/bagex/config.toml
+/// $XDG_CONFIG_HOME/bagex/config.toml, else returns $HOME/.config/bagex/config.toml
 pub fn default_config_file() -> PathBuf {
     if let Ok(path) = std::env::var("XDG_CONFIG_HOME") {
         PathBuf::from_str(&path).unwrap()
@@ -19,7 +19,9 @@ pub fn default_config_file() -> PathBuf {
     .join("config.toml")
 }
 
-pub fn compose_and_set_path(additional_path: Vec<PathBuf>) -> Vec<PathBuf> {
+pub fn compose_and_set_env_path(
+    additional_path: Vec<PathBuf>,
+) -> Vec<PathBuf> {
     let mut path = additional_path;
     path = path
         .iter()
@@ -49,10 +51,7 @@ pub fn compose_and_set_path(additional_path: Vec<PathBuf>) -> Vec<PathBuf> {
     path
 }
 
-pub fn get_executable_path(
-    req_exe_name: String,
-    path: Vec<PathBuf>,
-) -> PathBuf {
+pub fn get_exe_abs_path(req_exe_name: String, path: Vec<PathBuf>) -> PathBuf {
     let mut exe: PathBuf = PathBuf::new();
     for p in path {
         if p.join(&req_exe_name).exists() {

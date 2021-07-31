@@ -11,7 +11,7 @@ The configuration file is in [toml](https://github.com/toml-lang/toml) format,
 and consists of 3 parts: `path`, `env`, and `exe`.
 
 - `path`: It is an array of paths, which will be **prepended** to the
-  environment variable `PATH` when `bagex` tries to find a executable.
+  environment variable `$PATH` when `bagex` tries to find a executable.
 - `env`: This section creates multiple one-to-many mappings _from an
   environment variable to some executables_.
 - `exe`: This section creates multiple one-to-many mappings _from an
@@ -61,7 +61,7 @@ $ bagex -c ./config -d echo -- -en "Hello  world!"
 
 ## Use cases
 
-### For systemd services
+### Systemd services
 
 It _is_ quite convenient to set a process' environment in a systemd service,
 but every time the environment has to change, one must run `systemctl [--user]
@@ -74,7 +74,7 @@ of a program in a separate config file, so that each time the environment is
 changed in `bagex`'s config, only a `systemctl [--user] restart foo.service`
 has to be called.
 
-### For application launchers (like rofi, sxhkd, etc.)
+### Application launchers (like rofi, sxhkd, etc.)
 
 ## License
 

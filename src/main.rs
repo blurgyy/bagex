@@ -1,6 +1,6 @@
 use color_eyre::Report;
 use std::{
-    collections::HashMap, fs, path::PathBuf, process::Command, str::FromStr,
+    collections::HashMap, path::PathBuf, process::Command, str::FromStr,
 };
 use structopt::StructOpt;
 
@@ -48,11 +48,11 @@ fn main() -> Result<(), Report> {
         PathBuf::from_str(&opt.exe).unwrap_or_default()
     } else {
         log::debug!("Composing PATH ..");
-        let path: Vec<PathBuf> = utils::compose_and_set_path(
+        let path: Vec<PathBuf> = utils::compose_and_set_env_path(
             config.path.clone().unwrap_or_default(),
         );
         log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
-        utils::get_executable_path(opt.exe.clone(), path)
+        utils::get_exe_abs_path(opt.exe.clone(), path)
     };
     log::info!("Using executable from {:?}", exe_abs_path);
 
