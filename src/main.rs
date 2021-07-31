@@ -74,20 +74,17 @@ fn main() -> Result<(), Report> {
         .trim()
         .to_string();
         println!("{}", command_string);
-    } else if opt.clear_env || config.clear_env.unwrap_or(false) {
-        log::debug!("Spawning process without inherited envrionment ..");
-        Command::new(exe_abs_path)
-            .env_clear()
-            .envs(envs)
-            .args(opt.args)
-            .spawn()
-            .expect("Failed to run executable");
     } else {
+        let mut command = Command::new(exe_abs_path);
+        if opt.clear_env || config.clear_env.unwrap_or(false) {
+            log::info!("Command will not inherite environments from underlying shell");
+            command.env_clear();
+        }
         log::debug!("Spawning process ..");
-        Command::new(exe_abs_path)
+        command
             .envs(envs)
             .args(opt.args)
-            .spawn()
+            .status()
             .expect("Failed to run executable");
     }
 
