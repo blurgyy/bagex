@@ -25,6 +25,12 @@ path = [
 42 = [
     "printenv",
 ]
+# toml treats "." as signal of hierarchy.  Quote the value when it contains
+# dot(s), like this:
+[env.pi]
+"3.14" = [
+    "printenv",
+]
 
 ##############################################################################
 # exe: specifies which environments are associated with a given executable.
@@ -34,7 +40,6 @@ XSECURELOCK_PASSWORD_PROMPT = "disco"
 XSECURELOCK_COMPOSITE_OBSCURER = 0
 [exe.printenv]
 some_random_string = "YmFnZXgK"
-pi = 3.14
 
 # The composed environment is a combination of the above 2 configuration
 # methods, duplicated environment variable names will cause `bagex` to panic.
