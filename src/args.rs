@@ -18,6 +18,14 @@ pub struct Args {
 
     #[structopt(help = "Print the command to run and abort", short, long)]
     pub dry_run: bool,
+
+    #[structopt(
+        help = "Clear environment from underlying shell for requested executable",
+        conflicts_with = "dry_run",
+        short = "e",
+        long
+    )]
+    pub clear_env: bool,
 }
 
 // Author: Blurgy <gy@blurgy.xyz>

@@ -28,7 +28,7 @@ fn main() -> Result<(), Report> {
     }
 
     let exe_abs_path: PathBuf = if opt.exe.contains("/") {
-        log::debug!("A path ({}) instead of a name is requested", opt.exe);
+        log::warn!("A path ({}) instead of a name is requested", opt.exe);
         PathBuf::from_str(&opt.exe).unwrap_or_default()
     } else {
         log::debug!("Composing PATH ..");
@@ -48,7 +48,7 @@ fn main() -> Result<(), Report> {
             .to_str()
             .unwrap()
             .to_string(),
-        config,
+        &config,
     );
     log::trace!("Composed additional environments: {:#?}", envs);
 
@@ -74,6 +74,14 @@ fn main() -> Result<(), Report> {
         .trim()
         .to_string();
         println!("{}", command_string);
+    } else if opt.clear_env || config.clear_env.unwrap_or(false) {
+        log::debug!("Spawning process without inherited envrionment ..");
+        Command::new(exe_abs_path)
+            .env_clear()
+            .envs(envs)
+            .args(opt.args)
+            .spawn()
+            .expect("Failed to run executable");
     } else {
         log::debug!("Spawning process ..");
         Command::new(exe_abs_path)

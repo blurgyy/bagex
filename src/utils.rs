@@ -70,12 +70,12 @@ pub fn get_exe_abs_path(req_exe_name: String, path: Vec<PathBuf>) -> PathBuf {
 
 pub fn compose_environments(
     req_exe_name: String,
-    config: BagexConfig,
+    config: &BagexConfig,
 ) -> HashMap<String, String> {
     let mut ret: HashMap<String, String> = HashMap::new();
 
     log::debug!("Getting envs from env-exe mapping from config file ..");
-    if let toml::Value::Table(env_table) = config.env.unwrap() {
+    if let toml::Value::Table(env_table) = config.env.as_ref().unwrap() {
         for (env_name, info) in env_table {
             if let toml::Value::Table(ref value_exe_pairs) = info {
                 for (value, exes) in value_exe_pairs {
@@ -84,16 +84,19 @@ pub fn compose_environments(
                             req_exe_name.clone(),
                         )) {
                             assert!(
-                        !ret.contains_key(&env_name),
+                        !ret.contains_key(env_name),
                         "Environment variable {} is specified multiple times",
                         env_name,
                     );
                             log::debug!(
-                                "Setting env: {}={}",
+                                "Setting env: \"{}={}\"",
                                 env_name,
                                 value
                             );
-                            ret.insert(env_name, value.to_string());
+                            ret.insert(
+                                env_name.to_string(),
+                                value.to_string(),
+                            );
                             break;
                         }
                     }
@@ -103,13 +106,13 @@ pub fn compose_environments(
     }
 
     log::debug!("Getting envs from exe-env mapping from config file ..");
-    if let toml::Value::Table(exe_table) = config.exe.unwrap() {
+    if let toml::Value::Table(exe_table) = config.exe.as_ref().unwrap() {
         for (config_exe_name, env_specs) in exe_table {
-            if config_exe_name == req_exe_name {
+            if config_exe_name == &req_exe_name {
                 if let toml::Value::Table(envs) = env_specs {
                     for (env_name, value_raw) in envs {
                         assert!(
-                            !ret.contains_key(&env_name),
+                            !ret.contains_key(env_name),
                             "Environment variable {} is specified multiple times",
                             env_name,
                         );
@@ -119,7 +122,7 @@ pub fn compose_environments(
                             value_raw.to_string()
                         };
                         log::debug!("Setting env: {}={}", env_name, value);
-                        ret.insert(env_name, value);
+                        ret.insert(env_name.to_string(), value);
                     }
                 }
             }

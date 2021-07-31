@@ -8,6 +8,7 @@ pub struct BagexConfig {
     pub path: Option<Vec<std::path::PathBuf>>,
     pub env: Option<toml::Value>,
     pub exe: Option<toml::Value>,
+    pub clear_env: Option<bool>,
 }
 
 impl BagexConfig {
