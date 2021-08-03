@@ -81,11 +81,10 @@ fn main() -> Result<(), Report> {
             command.env_clear();
         }
         log::debug!("Spawning process ..");
-        command
-            .envs(envs)
-            .args(opt.args)
-            .status()
-            .expect("Failed to run executable");
+        match command.envs(envs).args(opt.args).status()?.code() {
+            Some(code) => std::process::exit(code),
+            None => std::process::exit(169),
+        };
     }
 
     Ok(())
