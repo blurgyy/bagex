@@ -53,8 +53,8 @@ impl BagexConfig {
     }
 
     pub fn from_pathbuf(path: PathBuf) -> Result<BagexConfig, Report> {
-        let confstr = std::fs::read_to_string(path).unwrap();
-        Ok(toml::from_str(&confstr).unwrap())
+        let confstr = std::fs::read_to_string(path)?;
+        Ok(toml::from_str(&confstr)?)
     }
 }
 

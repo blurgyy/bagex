@@ -36,7 +36,7 @@ fn main() -> Result<(), Report> {
             config.path.clone().unwrap_or_default(),
         );
         log::debug!("Finding executable '{}' from composed PATH ..", opt.exe);
-        bagex::utils::get_exe_abs_path(opt.exe.clone(), path)
+        bagex::utils::get_exe_abs_path(opt.exe.clone(), path)?
     };
     log::info!("Using executable from {:?}", exe_abs_path);
 

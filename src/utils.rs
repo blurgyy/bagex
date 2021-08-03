@@ -1,4 +1,9 @@
-use std::{collections::HashMap, path::PathBuf, str::FromStr};
+use std::{
+    collections::HashMap, os::unix::prelude::PermissionsExt, path::PathBuf,
+    str::FromStr,
+};
+
+use color_eyre::Report;
 
 use crate::config::BagexConfig;
 
@@ -51,21 +56,22 @@ pub fn compose_and_set_env_path(
     path
 }
 
-pub fn get_exe_abs_path(req_exe_name: String, path: Vec<PathBuf>) -> PathBuf {
-    let mut exe: PathBuf = PathBuf::new();
+pub fn get_exe_abs_path(
+    req_exe_name: String,
+    path: Vec<PathBuf>,
+) -> Result<PathBuf, Report> {
     for p in path {
-        if p.join(&req_exe_name).exists() {
-            exe = p.join(&req_exe_name);
-            break;
+        let candidate = p.join(&req_exe_name);
+        if candidate.is_file()
+            && candidate.metadata()?.permissions().mode() & 0o110 == 0o110
+        {
+            return Ok(candidate);
         }
     }
-    assert!(
-        exe.exists(),
+    Err(color_eyre::eyre::eyre!(
         "Requested executable '{}' cannot be found anywhere in $PATH",
         req_exe_name,
-    );
-
-    exe
+    ))
 }
 
 pub fn compose_environments(
