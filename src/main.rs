@@ -91,7 +91,7 @@ fn main() -> Result<(), Report> {
 }
 
 fn setup() -> Result<(), Report> {
-    env_logger::init();
+    pretty_env_logger::init();
     color_eyre::install()?;
     Ok(())
 }
