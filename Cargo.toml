@@ -1,6 +1,6 @@
 [package]
 name = "bagex"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2018"
 description = "Manage environment of executables with ease"
 authors = ["Gaoyang Zhang <gy@blurgy.xyz>"]
